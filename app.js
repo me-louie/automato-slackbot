@@ -11,7 +11,6 @@ const app = new App({
 app.message('hello', async ({ message, say }) => {
     // say() sends a message to the channel where the event was triggered
     await say(`Hi there, <@${message.user}> :wave:!`);
-    // await publishMessage( "C01RC48QM60","testing");
   });
 
 
@@ -23,15 +22,11 @@ app.message('hello', async ({ message, say }) => {
   var index = 0;
   const job = schedule.scheduleJob('0 9 * * 01', async function() {
     try {
-      // Call the chat.postMessage method using the built-in WebClient
       const result = await app.client.chat.postMessage({
-        // The token you used to initialize your app
         token: process.env.SLACK_BOT_TOKEN,
         channel: "C01RC48QM60",
         text: `This week's automato is: <@${users[(index++ % users.length)]}> :coffee:`
-        // You could also use a blocks[] array to send richer content
       });
-      // Print result, which includes information about the message (like TS)
       console.log(result);
     }
     catch (error) {
