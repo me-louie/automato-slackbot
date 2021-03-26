@@ -9,6 +9,7 @@
   "author": "Mikayla Louie",
   "license": "ISC",
   "dependencies": {
-    "@slack/bolt": "^3.3.0"
+    "@slack/bolt": "^3.3.0",
+    "node-schedule": "^2.0.0"
   }
 }
