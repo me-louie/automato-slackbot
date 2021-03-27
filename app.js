@@ -9,22 +9,26 @@ const app = new App({
 
 // Listens to incoming messages that contain "hello"
 app.message('hello', async ({ message, say }) => {
-    // say() sends a message to the channel where the event was triggered
     await say(`Hi there, <@${message.user}> :wave:!`);
   });
 
+app.message('next', async ({ message, say }) => {
+  const next = (index+1) % users.length;
+  await say(`<@${users[next]}> is next :meow_dance:`);
+});
+
+var users = ["andrew.wong", "jenna.zhang", "candice.pang", "mikayla.louie", "rodolfo.landa", "kiki.ho", "ronan.fegan", "thomas.nakagawa"];
+var index = 7;
 
 (async () => {
   // Start your app
   await app.start(process.env.PORT || 3000);
   console.log('⚡️ Bolt app is running!');
-  var users = ["andrew.wong", "jenna.zhang", "candice.pang", "mikayla.louie", "rodolfo.landa", "kiki.ho", "ronan.fegan", "thomas.nakagawa"];
-  var index = 0;
   const job = schedule.scheduleJob('0 9 * * 01', async function() {
     try {
       const result = await app.client.chat.postMessage({
         token: process.env.SLACK_BOT_TOKEN,
-        channel: "C01RC48QM60",
+        channel: "C01RB6T20DS",
         text: `This week's automato is: <@${users[(index++ % users.length)]}> :coffee:`
       });
       console.log(result);
@@ -33,5 +37,4 @@ app.message('hello', async ({ message, say }) => {
       console.error(error);
     }
   })
-
 })();
