@@ -12,10 +12,14 @@ app.message('hello', async ({ message, say }) => {
     await say(`Hi there, <@${message.user}> :wave:!`);
   });
 
-app.message('next', async ({ message, say }) => {
+app.message('next', async ({ say }) => {
   const next = (index+1) % users.length;
   await say(`<@${users[next]}> is next :meow_dance:`);
 });
+
+app.message('on-call', async({say}) => {
+  await say(`<@${users[index % users.length]}> is on-call :meow_coffee:`);
+})
 
 var users = ["andrew.wong", "jenna.zhang", "candice.pang", "mikayla.louie", "rodolfo.landa", "kiki.ho", "ronan.fegan", "thomas.nakagawa"];
 var index = 7;
@@ -26,10 +30,11 @@ var index = 7;
   console.log('⚡️ Bolt app is running!');
   const job = schedule.scheduleJob('0 9 * * 01', async function() {
     try {
+      index = (index+1) % users.length;
       const result = await app.client.chat.postMessage({
         token: process.env.SLACK_BOT_TOKEN,
         channel: "C01RB6T20DS",
-        text: `This week's automato is: <@${users[(index++ % users.length)]}> :coffee:`
+        text: `This week's automato is: <@${users[index]}> :meow_coffee:`
       });
       console.log(result);
     }
