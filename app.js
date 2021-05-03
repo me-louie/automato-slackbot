@@ -45,10 +45,6 @@ app.message('wakeup', async({say}) => {
   await say(`I'm awake! :meowcoffeespit:`)
 });
 
-app.message('test', async({say}) => {
-  await say('Testing GitHub integration manual deploy');
-});
-
 var users = ["mikayla.louie", "rodolfo.landa", "kiki.ho", "ronan.fegan", "thomas.nakagawa", "andrew.wong", "jenna.zhang", "candice.pang"];
 
 (async () => {
