@@ -1,5 +1,4 @@
 const { App } = require('@slack/bolt');
-const schedule = require('node-schedule');
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
@@ -44,6 +43,10 @@ app.message('on-call', async({say}) => {
 
 app.message('wakeup', async({say}) => {
   await say(`I'm awake! :meowcoffeespit:`)
+});
+
+app.message('test', async({say}) => {
+  await say('Testing GitHub integration manual deploy');
 });
 
 var users = ["mikayla.louie", "rodolfo.landa", "kiki.ho", "ronan.fegan", "thomas.nakagawa", "andrew.wong", "jenna.zhang", "candice.pang"];
