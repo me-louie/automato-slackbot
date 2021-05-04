@@ -1,9 +1,19 @@
-const { App } = require('@slack/bolt');
+const { App, ExpressReceiver } = require('@slack/bolt');
+const serverlessExpress = require('@vendia/serverless-express');
+// Initializes your app with your bot token and signing secret
+const expressReceiver = new ExpressReceiver({
+  signingSecret: process.env.SLACK_SIGNING_SECRET,
+  // The `processBeforeResponse` option is required for all FaaS environments.
+  // It allows Bolt methods (e.g. `app.message`) to handle a Slack request
+  // before the Bolt framework responds to the request (e.g. `ack()`). This is
+  // important because FaaS immediately terminate handlers after the response.
+  processBeforeResponse: true
+});
 
 // Initializes your app with your bot token and signing secret
 const app = new App({
   token: process.env.SLACK_BOT_TOKEN,
-  signingSecret: process.env.SLACK_SIGNING_SECRET
+  receiver: expressReceiver
 });
 
 // Listens to incoming messages that contain "hello"
@@ -18,9 +28,7 @@ app.message('next', async ({ say }) => {
   await say(`<@${users[weekNum]}> is \`next\` :meowcoffeespit:`);
 });
 
-app.message('help', async({say}) => {
-  await say(`Try \`on-call\`, \`next\`, or \`schedule\` for more information!`);
-});
+
 app.message('schedule', async ({ say }) => {
   var today = new Date();
   var idx = today.getWeek() % users.length;
@@ -45,13 +53,12 @@ app.message('wakeup', async({say}) => {
   await say(`I'm awake! :meowcoffeespit:`)
 });
 
-var users = ["mikayla.louie", "rodolfo.landa", "kiki.ho", "ronan.fegan", "thomas.nakagawa", "andrew.wong", "jenna.zhang", "candice.pang"];
+var users = JSON.parse(process.env.USERS_LIST);
 
-(async () => {
-  // Start your app
-  await app.start(process.env.PORT || 3000);
-  console.log('⚡️ Bolt app is running!');
-})();
+// Handle the Lambda function event
+module.exports.handler = serverlessExpress({
+  app: expressReceiver.app
+});
 
 Date.prototype.getWeek = function() {
   var onejan = new Date(this.getFullYear(),0,1);
