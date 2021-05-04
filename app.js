@@ -23,7 +23,7 @@ app.message('hello', async ({ message, say }) => {
 
 app.message('next', async ({ say }) => {
   var today = new Date();
-  var weekNum = (today.getWeek() +1 ) % users.length;
+  var weekNum = (today.getWeekNumber() +1 ) % users.length;
 
   await say(`<@${users[weekNum]}> is \`next\` :meowcoffeespit:`);
 });
@@ -31,7 +31,7 @@ app.message('next', async ({ say }) => {
 
 app.message('schedule', async ({ say }) => {
   var today = new Date();
-  var idx = today.getWeek() % users.length;
+  var idx = today.getWeekNumber() % users.length;
   var schedule = `*Here's the line up:* \n`;
   var count = 0;
   while (count < users.length) {
@@ -44,13 +44,13 @@ app.message('schedule', async ({ say }) => {
 
 app.message('on-call', async({say}) => {
   var today = new Date();
-  var weekNum = today.getWeek() % users.length;
+  var weekNum = today.getWeekNumber() % users.length;
 
   await say(`<@${users[weekNum]}> is \`on-call\` :meow_coffee:`);
 });
 
 app.message('wakeup', async({say}) => {
-  await say(`I'm awake! :meowcoffeespit:`)
+  await say(`I'm awake! :meowcoffeespit:`);
 });
 
 var users = JSON.parse(process.env.USERS_LIST);
@@ -60,9 +60,11 @@ module.exports.handler = serverlessExpress({
   app: expressReceiver.app
 });
 
-Date.prototype.getWeek = function() {
-  var onejan = new Date(this.getFullYear(),0,1);
-  var today = new Date(this.getFullYear(),this.getMonth(),this.getDate());
-  var dayOfYear = ((today - onejan + 86400000)/86400000);
-  return Math.ceil(dayOfYear/7)
+// For a given date, get the ISO week number. Weeks begin on Monday
+Date.prototype.getWeekNumber = function(){
+  var d = new Date(Date.UTC(this.getFullYear(), this.getMonth(), this.getDate()));
+  var dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  var yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  return Math.ceil((((d - yearStart) / 86400000) + 1)/7);
 };
